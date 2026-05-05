@@ -124,16 +124,16 @@ export default function Footer() {
               <p className="text-white font-semibold">Subscribe to our newsletter</p>
               <p className="text-sm text-gray-500 mt-0.5">Get weekly market updates and new listings delivered to your inbox.</p>
             </div>
-            <form className="flex gap-2 w-full md:w-auto" onSubmit={(e) => e.preventDefault()}>
+            <div className="flex gap-2 w-full md:w-auto">
               <input
                 type="email"
                 placeholder="your@email.com"
                 className="flex-1 md:w-64 px-4 py-2 rounded-lg bg-gray-800 dark:bg-gray-900 border border-gray-700 text-white text-sm placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
               />
-              <button type="submit" className="btn-primary whitespace-nowrap">
+              <button type="button" className="btn-primary whitespace-nowrap">
                 Subscribe
               </button>
-            </form>
+            </div>
           </div>
         </div>
 

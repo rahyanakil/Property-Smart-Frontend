@@ -158,7 +158,7 @@ export default function AdminDashboard() {
                     <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                     <XAxis dataKey="month" tick={{ fontSize: 11 }} />
                     <YAxis tick={{ fontSize: 11 }} tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`} />
-                    <Tooltip formatter={(v: number) => formatPrice(v)} />
+                    <Tooltip formatter={(v) => formatPrice(v as number)} />
                     <Bar dataKey="revenue" fill="#2563eb" radius={[4, 4, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
@@ -344,7 +344,7 @@ export default function AdminDashboard() {
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="month" tick={{ fontSize: 11 }} />
                   <YAxis tick={{ fontSize: 11 }} tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`} />
-                  <Tooltip formatter={(v: number) => formatPrice(v)} />
+                  <Tooltip formatter={(v) => formatPrice(v as number)} />
                   <Bar dataKey="revenue" fill="#2563eb" radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
