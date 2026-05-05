@@ -103,6 +103,7 @@ export default function ProfilePage() {
           <div className="flex items-center gap-5">
             <div className="relative">
               {(avatarPreview || user.avatar) ? (
+                // eslint-disable-next-line @next/next/no-img-element
                 <img src={avatarPreview || user.avatar!} alt={user.name} className="w-20 h-20 rounded-full object-cover ring-4 ring-primary-100 dark:ring-primary-900/40" />
               ) : (
                 <div className="w-20 h-20 rounded-full bg-primary-100 dark:bg-primary-900/40 flex items-center justify-center ring-4 ring-primary-50 dark:ring-primary-900/20">

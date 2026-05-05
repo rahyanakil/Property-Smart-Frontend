@@ -1,3 +1,7 @@
+'use client';
+
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
   Search, Home, Building, TrendingUp, Star, ChevronRight, MapPin,
@@ -56,6 +60,15 @@ const faqs = [
 ];
 
 export default function HomePage() {
+  const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    const q = searchQuery.trim();
+    router.push(q ? `/properties?search=${encodeURIComponent(q)}` : '/properties');
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
@@ -77,19 +90,21 @@ export default function HomePage() {
           </p>
 
           {/* Search bar */}
-          <div className="bg-white dark:bg-gray-800 rounded-2xl p-2 max-w-2xl w-full mx-auto flex gap-2 shadow-2xl">
+          <form onSubmit={handleSearch} className="bg-white dark:bg-gray-800 rounded-2xl p-2 max-w-2xl w-full mx-auto flex gap-2 shadow-2xl">
             <div className="flex items-center flex-1 gap-2 px-3">
               <Search className="text-gray-400 shrink-0" size={20} />
               <input
                 type="text"
-                placeholder="Search by city, neighborhood, or address..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search by city, area, or property type..."
                 className="flex-1 text-gray-800 dark:text-gray-200 dark:bg-gray-800 outline-none text-sm"
               />
             </div>
-            <Link href="/properties" className="btn-primary rounded-xl whitespace-nowrap">
+            <button type="submit" className="btn-primary rounded-xl whitespace-nowrap">
               Search
-            </Link>
-          </div>
+            </button>
+          </form>
 
           {/* Quick filters */}
           <div className="flex gap-2 mt-4 flex-wrap justify-center">

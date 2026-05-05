@@ -211,6 +211,7 @@ export default function NewPropertyPage() {
             <div className="grid grid-cols-4 gap-3">
               {images.map((img, i) => (
                 <div key={i} className="relative aspect-square">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={URL.createObjectURL(img)} alt="" className="w-full h-full object-cover rounded-lg" />
                   <button type="button" onClick={() => setImages((prev) => prev.filter((_, j) => j !== i))}
                     className="absolute top-1 right-1 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center">

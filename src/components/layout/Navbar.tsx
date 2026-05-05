@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useState, useRef, useEffect } from 'react';
 import {
@@ -137,7 +138,7 @@ export default function Navbar() {
                     className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                   >
                     {user.avatar ? (
-                      <img src={user.avatar} alt={user.name} className="w-7 h-7 rounded-full object-cover" />
+                      <Image src={user.avatar} alt={user.name} width={28} height={28} className="rounded-full object-cover" />
                     ) : (
                       <div className="w-7 h-7 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center">
                         <span className="text-primary-600 dark:text-primary-400 font-bold text-xs">{user.name[0].toUpperCase()}</span>

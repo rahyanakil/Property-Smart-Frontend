@@ -8,6 +8,7 @@ import {
   Calendar, Heart, User, Plus, BarChart2, Menu, X, LogOut,
   ChevronRight, Shield, Home,
 } from 'lucide-react';
+import Image from 'next/image';
 import { useAuth } from '@/hooks/useAuth';
 import { useTheme } from '@/context/ThemeContext';
 import { cn } from '@/lib/utils';
@@ -23,27 +24,27 @@ function getNavItems(role: string | undefined): NavItem[] {
   if (role === 'ADMIN') {
     return [
       { href: '/dashboard/admin', label: 'Overview', icon: LayoutDashboard },
-      { href: '/dashboard/admin?tab=Users', label: 'Users', icon: Users },
-      { href: '/dashboard/admin?tab=Properties', label: 'Properties', icon: Building },
-      { href: '/dashboard/admin?tab=Payments', label: 'Payments', icon: CreditCard },
-      { href: '/dashboard/admin?tab=Analytics', label: 'Analytics', icon: BarChart2 },
-      { href: '/dashboard/admin?tab=Settings', label: 'Settings', icon: Settings },
+      { href: '/dashboard/admin/users', label: 'Users', icon: Users },
+      { href: '/dashboard/admin/properties', label: 'Properties', icon: Building },
+      { href: '/dashboard/admin/payments', label: 'Payments', icon: CreditCard },
+      { href: '/dashboard/admin/analytics', label: 'Analytics', icon: BarChart2 },
+      { href: '/dashboard/admin/settings', label: 'Settings', icon: Settings },
     ];
   }
   if (role === 'AGENT') {
     return [
       { href: '/dashboard/agent', label: 'Overview', icon: LayoutDashboard },
-      { href: '/dashboard/agent?tab=Properties', label: 'My Properties', icon: Building },
-      { href: '/dashboard/agent?tab=Bookings', label: 'Bookings', icon: Calendar },
+      { href: '/dashboard/agent/properties', label: 'My Properties', icon: Building },
+      { href: '/dashboard/agent/bookings', label: 'Bookings', icon: Calendar },
       { href: '/dashboard/agent/new-property', label: 'Add Property', icon: Plus },
-      { href: '/dashboard/agent?tab=Analytics', label: 'Analytics', icon: BarChart2 },
+      { href: '/dashboard/agent/analytics', label: 'Analytics', icon: BarChart2 },
       { href: '/dashboard/profile', label: 'Profile', icon: User },
     ];
   }
   return [
     { href: '/dashboard/buyer', label: 'Overview', icon: LayoutDashboard },
-    { href: '/dashboard/buyer?tab=Bookings', label: 'My Bookings', icon: Calendar },
-    { href: '/dashboard/buyer?tab=Favorites', label: 'Favorites', icon: Heart },
+    { href: '/dashboard/buyer/bookings', label: 'My Bookings', icon: Calendar },
+    { href: '/dashboard/buyer/favorites', label: 'Favorites', icon: Heart },
     { href: '/dashboard/profile', label: 'Profile', icon: User },
   ];
 }
@@ -74,7 +75,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   const isActive = (href: string) => {
     const base = href.split('?')[0];
-    return pathname === base || (base !== '/dashboard' && pathname.startsWith(base));
+    // Exact match for overview pages to avoid staying active on sub-routes
+    const overviews = ['/dashboard/admin', '/dashboard/agent', '/dashboard/buyer'];
+    if (overviews.includes(base)) return pathname === base;
+    return pathname === base || pathname.startsWith(base + '/');
   };
 
   return (
@@ -105,7 +109,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <div className="p-4 border-b border-gray-200 dark:border-gray-700">
           <div className="flex items-center gap-3">
             {user.avatar ? (
-              <img src={user.avatar} alt={user.name} className="w-10 h-10 rounded-full object-cover" />
+              <Image src={user.avatar} alt={user.name} width={40} height={40} className="rounded-full object-cover" />
             ) : (
               <div className="w-10 h-10 rounded-full bg-primary-100 dark:bg-primary-900/40 flex items-center justify-center">
                 <span className="text-primary-600 dark:text-primary-400 font-bold">{user.name[0].toUpperCase()}</span>
@@ -177,7 +181,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           {/* Profile dropdown (dashboard top bar) */}
           <Link href="/dashboard/profile" className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
             {user.avatar ? (
-              <img src={user.avatar} alt={user.name} className="w-7 h-7 rounded-full object-cover" />
+              <Image src={user.avatar} alt={user.name} width={28} height={28} className="rounded-full object-cover" />
             ) : (
               <div className="w-7 h-7 rounded-full bg-primary-100 dark:bg-primary-900/40 flex items-center justify-center">
                 <span className="text-primary-600 dark:text-primary-400 font-bold text-xs">{user.name[0].toUpperCase()}</span>

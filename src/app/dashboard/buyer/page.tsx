@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { Suspense, useState, useMemo, useEffect } from 'react';
+import Image from 'next/image';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Calendar, Heart, Clock, CheckCircle, BarChart2 } from 'lucide-react';
@@ -19,7 +20,7 @@ const TABS = ['Overview', 'Bookings', 'Favorites'] as const;
 type Tab = typeof TABS[number];
 const PIE_COLORS = ['#2563eb', '#16a34a', '#f59e0b', '#dc2626'];
 
-export default function BuyerDashboard() {
+function BuyerDashboardContent() {
   const { user } = useAuth();
   const qc = useQueryClient();
   const searchParams = useSearchParams();
@@ -162,7 +163,7 @@ export default function BuyerDashboard() {
               ) : bookings.slice(0, 3).map((b: import('@/types').Booking) => (
                 <div key={b.id} className="card p-4 flex gap-4">
                   {b.property?.images?.[0] && (
-                    <img src={b.property.images[0]} alt="" className="w-16 h-16 rounded-lg object-cover shrink-0" />
+                    <Image src={b.property.images[0]} alt="" width={64} height={64} className="rounded-lg object-cover shrink-0" />
                   )}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-2">
@@ -203,7 +204,7 @@ export default function BuyerDashboard() {
             filteredBookings.map((booking: import('@/types').Booking) => (
               <div key={booking.id} className="card p-5 flex gap-4">
                 {booking.property?.images?.[0] && (
-                  <img src={booking.property.images[0]} alt="" className="w-20 h-20 rounded-lg object-cover shrink-0" />
+                  <Image src={booking.property.images[0]} alt="" width={80} height={80} className="rounded-lg object-cover shrink-0" />
                 )}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between gap-2">
@@ -249,7 +250,7 @@ export default function BuyerDashboard() {
             favorites.map((fav: { id: string; propertyId: string; property: { id: string; title: string; price: number; city: string; state: string; images: string[] } }) => (
               <div key={fav.id} className="card p-4 flex gap-3 hover:shadow-md transition-shadow">
                 {fav.property?.images?.[0] && (
-                  <img src={fav.property.images[0]} alt="" className="w-20 h-20 rounded-lg object-cover shrink-0" />
+                  <Image src={fav.property.images[0]} alt="" width={80} height={80} className="rounded-lg object-cover shrink-0" />
                 )}
                 <div className="flex-1 min-w-0">
                   <Link href={`/properties/${fav.property?.id}`} className="font-semibold text-gray-900 dark:text-white hover:text-primary-600 dark:hover:text-primary-400 line-clamp-1 text-sm">
@@ -271,4 +272,8 @@ export default function BuyerDashboard() {
       )}
     </div>
   );
+}
+
+export default function BuyerDashboard() {
+  return <Suspense><BuyerDashboardContent /></Suspense>;
 }

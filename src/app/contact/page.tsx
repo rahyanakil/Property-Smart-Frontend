@@ -55,10 +55,10 @@ export default function ContactPage() {
               </div>
 
               {[
-                { icon: Phone, label: 'Phone', value: '+1 (555) 123-4567', href: 'tel:+15551234567' },
-                { icon: Mail, label: 'Email', value: 'hello@propertysmart.com', href: 'mailto:hello@propertysmart.com' },
-                { icon: MapPin, label: 'Office', value: '123 Main St, New York, NY 10001', href: '#' },
-                { icon: Clock, label: 'Hours', value: 'Mon–Fri: 9am–6pm EST', href: '#' },
+                { icon: Phone, label: 'Phone', value: '+880 961-123-4567', href: 'tel:+8809611234567' },
+                { icon: Mail, label: 'Email', value: 'hello@propertysmart.com.bd', href: 'mailto:hello@propertysmart.com.bd' },
+                { icon: MapPin, label: 'Office', value: 'House 12, Road 5, Gulshan-1, Dhaka 1212', href: '#' },
+                { icon: Clock, label: 'Hours', value: 'Sun–Thu: 9am–6pm BST', href: '#' },
               ].map(({ icon: Icon, label, value, href }) => (
                 <a key={label} href={href} className="card p-5 flex gap-4 hover:shadow-md transition-shadow block">
                   <div className="w-11 h-11 bg-primary-50 dark:bg-primary-900/30 rounded-xl flex items-center justify-center shrink-0">

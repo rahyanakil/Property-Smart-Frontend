@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { Suspense, useState, useMemo, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Plus, Building, Calendar, TrendingUp, Eye, Pencil, Trash2, CheckCircle, BarChart2 } from 'lucide-react';
@@ -10,7 +10,7 @@ import ConfirmDialog from '@/components/ui/ConfirmDialog';
 import PropertyCard from '@/components/property/PropertyCard';
 import { useAuth } from '@/hooks/useAuth';
 import { propertyApi, bookingApi } from '@/lib/api';
-import { formatDate, getStatusColor, formatPrice, cn } from '@/lib/utils';
+import { formatDate, getStatusColor, cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -21,7 +21,7 @@ const TABS = ['Overview', 'Properties', 'Bookings', 'Analytics'] as const;
 type Tab = typeof TABS[number];
 const PIE_COLORS = ['#2563eb', '#16a34a', '#f59e0b', '#dc2626'];
 
-export default function AgentDashboard() {
+function AgentDashboardContent() {
   const { user } = useAuth();
   const qc = useQueryClient();
   const searchParams = useSearchParams();
@@ -345,4 +345,8 @@ export default function AgentDashboard() {
       )}
     </div>
   );
+}
+
+export default function AgentDashboard() {
+  return <Suspense><AgentDashboardContent /></Suspense>;
 }

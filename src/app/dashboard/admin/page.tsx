@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { Suspense, useState, useMemo, useEffect } from 'react';
+import Link from 'next/link';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Users, Building, CreditCard, TrendingUp, CheckCircle, Shield, BarChart2 } from 'lucide-react';
@@ -19,7 +20,7 @@ type Tab = typeof TABS[number];
 
 const COLORS = ['#2563eb', '#16a34a', '#f59e0b', '#dc2626', '#7c3aed', '#0891b2'];
 
-export default function AdminDashboard() {
+function AdminDashboardContent() {
   const { user } = useAuth();
   const qc = useQueryClient();
   const searchParams = useSearchParams();
@@ -301,7 +302,7 @@ export default function AdminDashboard() {
           <Building size={56} className="mx-auto mb-4 opacity-20" />
           <p className="text-lg font-medium mb-2 text-gray-700 dark:text-gray-300">Manage All Properties</p>
           <p className="text-sm mb-6">Browse and moderate all listed properties on the platform.</p>
-          <a href="/properties" className="btn-primary">Browse Properties</a>
+          <Link href="/properties" className="btn-primary">Browse Properties</Link>
         </div>
       )}
 
@@ -400,4 +401,8 @@ export default function AdminDashboard() {
       )}
     </div>
   );
+}
+
+export default function AdminDashboard() {
+  return <Suspense><AdminDashboardContent /></Suspense>;
 }
