@@ -34,9 +34,10 @@ export default function LoginPage() {
 
   const onSubmit = async (data: FormData) => {
     try {
-      await login(data.email, data.password);
+      const user = await login(data.email, data.password);
       toast.success('Welcome back!');
-      router.push('/');
+      const redirect = user.role === 'ADMIN' ? '/dashboard/admin' : user.role === 'AGENT' ? '/dashboard/agent' : '/dashboard/buyer';
+      router.push(redirect);
     } catch (err: unknown) {
       const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Login failed';
       toast.error(msg);
@@ -52,7 +53,7 @@ export default function LoginPage() {
 
   const handleOAuth = (provider: 'google' | 'github') => {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
-    window.location.href = `${apiUrl}/api/v1/auth/${provider}`;
+    window.location.href = `${apiUrl}/api/v1/auth/oauth/${provider}/callback`;
   };
 
   return (

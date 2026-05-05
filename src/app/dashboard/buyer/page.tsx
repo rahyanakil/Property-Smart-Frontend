@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { Calendar, Heart, Clock, CheckCircle, BarChart2 } from 'lucide-react';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import { useAuth } from '@/hooks/useAuth';
@@ -21,7 +22,14 @@ const PIE_COLORS = ['#2563eb', '#16a34a', '#f59e0b', '#dc2626'];
 export default function BuyerDashboard() {
   const { user } = useAuth();
   const qc = useQueryClient();
-  const [tab, setTab] = useState<Tab>('Overview');
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const [tab, setTab] = useState<Tab>(() => (searchParams.get('tab') as Tab) || 'Overview');
+
+  useEffect(() => {
+    const urlTab = searchParams.get('tab') as Tab | null;
+    if (urlTab && TABS.includes(urlTab)) setTab(urlTab);
+  }, [searchParams]);
   const [bookingFilter, setBookingFilter] = useState('ALL');
 
   const { data: bookingsData, isLoading: bookingsLoading } = useQuery({
@@ -94,7 +102,7 @@ export default function BuyerDashboard() {
       {/* Tabs */}
       <div className="flex gap-1 border-b border-gray-200 dark:border-gray-700 mb-6 overflow-x-auto">
         {TABS.map((t) => (
-          <button key={t} onClick={() => setTab(t)} className={cn(
+          <button key={t} onClick={() => { setTab(t); router.replace(`/dashboard/buyer?tab=${t}`, { scroll: false }); }} className={cn(
             'px-4 py-2.5 text-sm font-medium border-b-2 -mb-px transition-colors whitespace-nowrap',
             tab === t ? 'border-primary-600 text-primary-600 dark:border-primary-400 dark:text-primary-400' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
           )}>

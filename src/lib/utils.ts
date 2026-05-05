@@ -3,8 +3,11 @@ import { twMerge } from 'tailwind-merge';
 
 export const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs));
 
-export const formatPrice = (price: number, currency = 'USD') =>
-  new Intl.NumberFormat('en-US', { style: 'currency', currency, maximumFractionDigits: 0 }).format(price);
+export const formatPrice = (price: number) => {
+  if (price >= 10_000_000) return `৳${(price / 10_000_000).toFixed(2)} Cr`;
+  if (price >= 100_000) return `৳${(price / 100_000).toFixed(2)} Lac`;
+  return `৳${price.toLocaleString('en-IN')}`;
+};
 
 export const formatDate = (date: string | Date) =>
   new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'long', day: 'numeric' }).format(new Date(date));

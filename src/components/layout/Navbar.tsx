@@ -126,9 +126,11 @@ export default function Navbar() {
 
             {user ? (
               <>
-                <Link href="/dashboard/buyer" className="w-9 h-9 flex items-center justify-center rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" title="Favorites">
-                  <Heart size={18} />
-                </Link>
+                {user.role === 'BUYER' && (
+                  <Link href="/dashboard/buyer?tab=Favorites" className="w-9 h-9 flex items-center justify-center rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" title="Favorites">
+                    <Heart size={18} />
+                  </Link>
+                )}
                 <div ref={profileRef} className="relative">
                   <button
                     onClick={() => setProfileOpen(!profileOpen)}
@@ -160,9 +162,11 @@ export default function Navbar() {
                       <Link href="/dashboard/profile" className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800" onClick={() => setProfileOpen(false)}>
                         <User size={14} /> My Profile
                       </Link>
-                      <Link href="/dashboard/buyer" className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800" onClick={() => setProfileOpen(false)}>
-                        <Heart size={14} /> My Favorites
-                      </Link>
+                      {user.role === 'BUYER' && (
+                        <Link href="/dashboard/buyer?tab=Favorites" className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800" onClick={() => setProfileOpen(false)}>
+                          <Heart size={14} /> My Favorites
+                        </Link>
+                      )}
                       <div className="border-t dark:border-gray-700 mt-1 pt-1">
                         <button
                           onClick={() => { logout(); setProfileOpen(false); }}

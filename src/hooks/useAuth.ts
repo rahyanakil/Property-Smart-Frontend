@@ -7,7 +7,7 @@ import type { User } from '@/types';
 interface AuthContextType {
   user: User | null;
   loading: boolean;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<User>;
   register: (data: { name: string; email: string; password: string; role?: string }) => Promise<void>;
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
@@ -34,7 +34,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const login = async (email: string, password: string) => {
     const { data } = await authApi.login({ email, password });
-    setUser(data.data.user);
+    const user = data.data.user;
+    setUser(user);
+    return user;
   };
 
   const register = async (formData: { name: string; email: string; password: string; role?: string }) => {

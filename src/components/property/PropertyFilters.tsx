@@ -78,7 +78,7 @@ export default function PropertyFilters({ filters, onChange }: PropertyFiltersPr
             <label className="block text-xs font-medium text-gray-600 mb-1">Min Price</label>
             <input
               type="number"
-              placeholder="$0"
+              placeholder="৳ 0"
               value={filters.minPrice || ''}
               onChange={(e) => update('minPrice', e.target.value ? Number(e.target.value) : undefined)}
               className="input"

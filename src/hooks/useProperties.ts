@@ -1,7 +1,7 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { propertyApi } from '@/lib/api';
+import { propertyApi, userApi } from '@/lib/api';
 import type { PropertyFilters } from '@/types';
 import toast from 'react-hot-toast';
 
@@ -71,10 +71,7 @@ export const useDeleteProperty = () => {
 export const useToggleFavorite = () => {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (propertyId: string) => {
-      const { userApi } = require('@/lib/api');
-      return userApi.toggleFavorite(propertyId);
-    },
+    mutationFn: (propertyId: string) => userApi.toggleFavorite(propertyId),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['favorites'] }),
   });
 };

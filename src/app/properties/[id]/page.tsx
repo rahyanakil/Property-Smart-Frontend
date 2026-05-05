@@ -356,8 +356,8 @@ export default function PropertyDetailPage() {
                     { label: 'Type', value: property.type },
                     { label: 'Status', value: property.status },
                     { label: 'City', value: property.city },
-                    { label: 'State', value: property.state },
-                    { label: 'ZIP', value: property.zipCode },
+                    { label: 'Division', value: property.state },
+                    { label: 'Postal Code', value: property.zipCode },
                     { label: 'Country', value: property.country },
                     { label: 'Views', value: property.viewCount.toString() },
                   ].map(({ label, value }) => (

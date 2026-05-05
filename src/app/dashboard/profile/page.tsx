@@ -149,7 +149,7 @@ export default function ProfilePage() {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Phone</label>
-              <input {...rp('phone')} className="input" placeholder="+1 (555) 000-0000" />
+              <input {...rp('phone')} className="input" placeholder="+880 1711-000000" />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Bio</label>

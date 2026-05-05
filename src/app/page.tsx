@@ -10,25 +10,25 @@ import FeaturedProperties from '@/components/property/FeaturedProperties';
 
 const testimonials = [
   {
-    name: 'Sarah Johnson',
-    role: 'First-time Homebuyer',
-    avatar: 'SJ',
+    name: 'নাদিয়া রহমান',
+    role: 'প্রথমবার বাড়ি ক্রেতা',
+    avatar: 'NR',
     rating: 5,
-    text: 'PropertySmart made finding my first home an absolute breeze. The filters are powerful and the agents are incredibly responsive. I found my dream home in just 2 weeks!',
+    text: 'PropertySmart এর মাধ্যমে গুলশানে আমার স্বপ্নের ফ্ল্যাট খুঁজে পেলাম। ফিল্টার সিস্টেম অসাধারণ এবং এজেন্টরা খুবই সহায়ক। মাত্র ২ সপ্তাহে বাড়ি পেয়েছি!',
   },
   {
-    name: 'Michael Chen',
-    role: 'Real Estate Investor',
-    avatar: 'MC',
+    name: 'করিম সাহেব',
+    role: 'রিয়েল এস্টেট বিনিয়োগকারী',
+    avatar: 'KS',
     rating: 5,
-    text: 'As someone who manages a portfolio of properties, this platform has streamlined my entire process. The analytics and market insights are truly invaluable.',
+    text: 'একাধিক প্রপার্টি পরিচালনা করা এখন অনেক সহজ। অ্যানালিটিক্স ও মার্কেট ইনসাইট সত্যিই অমূল্য। ঢাকা ও চট্টগ্রামে আমার বিনিয়োগ এই প্ল্যাটফর্ম থেকেই করেছি।',
   },
   {
-    name: 'Emily Rodriguez',
-    role: 'Agent, 5 years',
-    avatar: 'ER',
+    name: 'রহিমা চৌধুরী',
+    role: 'প্রপার্টি এজেন্ট, ৫ বছর',
+    avatar: 'RC',
     rating: 5,
-    text: 'The agent dashboard is everything I needed. I can manage all my listings, bookings, and client communications from one place. My business has grown 40% since joining.',
+    text: 'এজেন্ট ড্যাশবোর্ড আমার সব দরকার মেটায়। লিস্টিং, বুকিং ও ক্লায়েন্ট ম্যানেজমেন্ট একটি জায়গা থেকেই করতে পারছি। আমার ব্যবসা ৪০% বেড়েছে।',
   },
 ];
 
@@ -343,22 +343,22 @@ export default function HomePage() {
               </div>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <a href="tel:+15551234567" className="card p-5 flex items-center gap-4 hover:shadow-md transition-shadow group">
+              <a href="tel:+8809611234567" className="card p-5 flex items-center gap-4 hover:shadow-md transition-shadow group">
                 <div className="w-12 h-12 bg-primary-50 dark:bg-primary-900/30 rounded-xl flex items-center justify-center group-hover:bg-primary-100 dark:group-hover:bg-primary-900/50 transition-colors">
                   <Phone size={22} className="text-primary-600 dark:text-primary-400" />
                 </div>
                 <div>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Call us</p>
-                  <p className="font-semibold text-gray-900 dark:text-white text-sm">+1 (555) 123-4567</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">আমাদের কল করুন</p>
+                  <p className="font-semibold text-gray-900 dark:text-white text-sm">+880 961-123-4567</p>
                 </div>
               </a>
-              <a href="mailto:hello@propertysmart.com" className="card p-5 flex items-center gap-4 hover:shadow-md transition-shadow group">
+              <a href="mailto:hello@propertysmart.com.bd" className="card p-5 flex items-center gap-4 hover:shadow-md transition-shadow group">
                 <div className="w-12 h-12 bg-secondary-50 dark:bg-secondary-900/20 rounded-xl flex items-center justify-center group-hover:bg-secondary-100 dark:group-hover:bg-secondary-900/30 transition-colors">
                   <Mail size={22} className="text-secondary-600 dark:text-secondary-400" />
                 </div>
                 <div>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Email us</p>
-                  <p className="font-semibold text-gray-900 dark:text-white text-sm">hello@propertysmart.com</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">ইমেইল করুন</p>
+                  <p className="font-semibold text-gray-900 dark:text-white text-sm">hello@propertysmart.com.bd</p>
                 </div>
               </a>
             </div>
