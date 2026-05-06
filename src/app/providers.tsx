@@ -1,11 +1,11 @@
 'use client';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from '@/hooks/useAuth';
 import { ThemeProvider } from '@/context/ThemeContext';
 import SmoothScroll from '@/components/ui/SmoothScroll';
 import PageTransition from '@/components/ui/PageTransition';
+import CustomToaster from '@/components/ui/CustomToaster';
 import { useState } from 'react';
 
 export function Providers({ children }: { children: React.ReactNode }) {
@@ -21,13 +21,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
             <PageTransition>
             {children}
             </PageTransition>
-            <Toaster
-              position="top-right"
-              toastOptions={{
-                duration: 4000,
-                style: { borderRadius: '8px', background: '#333', color: '#fff' },
-              }}
-            />
+            <CustomToaster />
           </SmoothScroll>
         </AuthProvider>
       </QueryClientProvider>

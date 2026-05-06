@@ -300,9 +300,9 @@ function AdminDashboardContent() {
       {tab === 'Properties' && (
         <div className="text-center py-16 text-gray-500 dark:text-gray-400">
           <Building size={56} className="mx-auto mb-4 opacity-20" />
-          <p className="text-lg font-medium mb-2 text-gray-700 dark:text-gray-300">Manage All Properties</p>
-          <p className="text-sm mb-6">Browse and moderate all listed properties on the platform.</p>
-          <Link href="/properties" className="btn-primary">Browse Properties</Link>
+          <p className="text-lg font-medium mb-2 text-gray-700 dark:text-gray-300">Property Management</p>
+          <p className="text-sm mb-6">View, filter, feature, and delete all platform listings.</p>
+          <Link href="/dashboard/admin/properties" className="btn-primary">Open Property Manager</Link>
         </div>
       )}
 
@@ -352,7 +352,7 @@ function AdminDashboardContent() {
                 <BarChart data={revenueByMonth.length ? revenueByMonth : [{ month: 'No data', revenue: 0 }]}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="month" tick={{ fontSize: 11 }} />
-                  <YAxis tick={{ fontSize: 11 }} tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`} />
+                  <YAxis tick={{ fontSize: 11 }} tickFormatter={(v) => `৳${(v / 100000).toFixed(0)}L`} />
                   <Tooltip formatter={(v) => formatPrice(v as number)} />
                   <Bar dataKey="revenue" fill="#2563eb" radius={[4, 4, 0, 0]} />
                 </BarChart>
@@ -371,6 +371,11 @@ function AdminDashboardContent() {
               </ResponsiveContainer>
             </div>
           </div>
+          <div className="text-center">
+            <Link href="/dashboard/admin/analytics" className="text-sm text-primary-600 dark:text-primary-400 hover:underline">
+              View full analytics dashboard →
+            </Link>
+          </div>
         </div>
       )}
 
@@ -381,21 +386,12 @@ function AdminDashboardContent() {
             <h3 className="font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
               <CheckCircle size={18} className="text-green-500" /> Platform Settings
             </h3>
-            <div className="space-y-4">
-              {[
-                { label: 'Allow new registrations', defaultChecked: true },
-                { label: 'Email notifications', defaultChecked: true },
-                { label: 'Agent verification required', defaultChecked: true },
-                { label: 'Maintenance mode', defaultChecked: false },
-              ].map(({ label, defaultChecked }) => (
-                <label key={label} className="flex items-center justify-between py-2 cursor-pointer">
-                  <span className="text-sm text-gray-700 dark:text-gray-300">{label}</span>
-                  <div className={cn('relative inline-flex h-5 w-9 items-center rounded-full transition-colors', defaultChecked ? 'bg-primary-600' : 'bg-gray-200 dark:bg-gray-700')}>
-                    <span className={cn('inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow transition-transform', defaultChecked ? 'translate-x-4.5' : 'translate-x-0.5')} />
-                  </div>
-                </label>
-              ))}
-            </div>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+              Configure registrations, notifications, verification, and maintenance mode.
+            </p>
+            <Link href="/dashboard/admin/settings" className="btn-primary inline-flex items-center gap-2">
+              Open Settings
+            </Link>
           </div>
         </div>
       )}
