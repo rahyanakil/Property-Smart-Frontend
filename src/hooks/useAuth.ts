@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useState, useEffect, useCallback, ReactNode, createElement } from 'react';
 import { authApi } from '@/lib/api';
+import { TokenStore } from '@/lib/token';
 import type { User } from '@/types';
 
 interface AuthContextType {
@@ -19,6 +20,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // Fetch current user — called on mount and after any auth action.
+  // The axios interceptor will attach the stored token as Bearer header,
+  // so this works even when cross-origin cookies are blocked.
   const refreshUser = useCallback(async () => {
     try {
       const { data } = await authApi.me();
@@ -32,24 +36,40 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => { refreshUser(); }, [refreshUser]);
 
-  const login = async (email: string, password: string) => {
+  const login = async (email: string, password: string): Promise<User> => {
     const { data } = await authApi.login({ email, password });
-    const user = data.data.user;
+    const { user, accessToken, refreshToken } = data.data;
+
+    // Store tokens so the axios interceptor can send them as Bearer headers.
+    // This bypasses cross-origin cookie blocking on Vercel.
+    if (accessToken) TokenStore.setAccess(accessToken);
+    if (refreshToken) TokenStore.setRefresh(refreshToken);
+
     setUser(user);
     return user;
   };
 
   const register = async (formData: { name: string; email: string; password: string; role?: string }) => {
     const { data } = await authApi.register(formData);
-    setUser(data.data.user);
+    const { user, accessToken, refreshToken } = data.data;
+
+    if (accessToken) TokenStore.setAccess(accessToken);
+    if (refreshToken) TokenStore.setRefresh(refreshToken);
+
+    setUser(user);
   };
 
   const logout = async () => {
-    await authApi.logout();
+    try { await authApi.logout(); } catch { /* ignore */ }
+    TokenStore.clear();
     setUser(null);
   };
 
-  return createElement(AuthContext.Provider, { value: { user, loading, login, register, logout, refreshUser } }, children);
+  return createElement(
+    AuthContext.Provider,
+    { value: { user, loading, login, register, logout, refreshUser } },
+    children,
+  );
 };
 
 export const useAuth = () => {

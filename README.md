@@ -1,6 +1,6 @@
 # PropertySmart — Frontend
 
-Next.js 15 (App Router) frontend for the PropertySmart real estate marketplace. Features a premium animated UI with Framer Motion, Lenis smooth scroll, dark mode, role-based dashboards, Stripe checkout, and full TypeScript coverage.
+Next.js 15 (App Router) frontend for the PropertySmart real estate marketplace. Features a premium animated UI built with Framer Motion and Lenis smooth scroll, dark mode, role-based dashboards, Stripe checkout, and a dual-auth strategy that works reliably on both localhost and cross-origin Vercel deployments.
 
 ---
 
@@ -8,15 +8,50 @@ Next.js 15 (App Router) frontend for the PropertySmart real estate marketplace. 
 
 | | |
 |---|---|
-| Framework | Next.js 15 · React 19 · TypeScript 5 |
-| Styling | Tailwind CSS v3 · dark mode (`class`) |
-| Animations | Framer Motion · Lenis smooth scroll |
-| Data fetching | TanStack Query v5 · Axios |
-| Forms | react-hook-form · Zod · @hookform/resolvers |
-| Payments | Stripe.js · @stripe/react-stripe-js |
-| Charts | Recharts |
-| Toasts | react-hot-toast |
-| Icons | Lucide React |
+| **Framework** | Next.js 15 · React 19 · TypeScript 5 |
+| **Styling** | Tailwind CSS v3 · dark mode (`class`) |
+| **Animations** | Framer Motion · Lenis smooth scroll |
+| **Data fetching** | TanStack Query v5 · Axios |
+| **Forms** | react-hook-form · Zod · @hookform/resolvers |
+| **Payments** | @stripe/stripe-js · @stripe/react-stripe-js |
+| **Charts** | Recharts |
+| **Toasts** | react-hot-toast |
+| **Icons** | Lucide React |
+
+---
+
+## Setup
+
+### Install
+
+Run from the **repo root** — npm workspaces hoist all dependencies:
+
+```bash
+npm install   # from PropertySmart/ root, not from inside this folder
+```
+
+### Environment
+
+```bash
+cp .env.local.example .env.local
+```
+
+```env
+# Backend URL — used by axios (baseURL) and next.config.ts (rewrite destination)
+NEXT_PUBLIC_API_URL=http://localhost:5000
+
+# Stripe publishable key
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_xxx
+```
+
+### Run
+
+```bash
+npm run dev          # next dev on :3000
+npm run build        # next build (must pass before deploying)
+npm run type-check   # tsc --noEmit
+npm run lint         # next lint
+```
 
 ---
 
@@ -24,277 +59,411 @@ Next.js 15 (App Router) frontend for the PropertySmart real estate marketplace. 
 
 ```
 src/
-├── app/                          Next.js App Router
+├── app/                                  Next.js App Router
+│   ├── layout.tsx                        Root layout — ScrollProgressBar + Providers
+│   ├── providers.tsx                     QueryClient · Auth · Theme · SmoothScroll · PageTransition
+│   ├── globals.css                       Tailwind + global classes (.btn-primary .card etc) + Lenis CSS
+│   ├── not-found.tsx                     Custom 404
+│   │
+│   ├── page.tsx                          Homepage
+│   │                                       • Hero: mouse-parallax + floating stat cards + glows
+│   │                                       • Browse by Type: stagger grid
+│   │                                       • Featured Properties: scroll-triggered stagger
+│   │                                       • How It Works: step cards with spring badges
+│   │                                       • Testimonials: star pop-in animation
+│   │                                       • FAQ: AnimatePresence accordion
+│   │
 │   ├── (auth)/
-│   │   ├── login/page.tsx        Animated login with demo account auto-fill
-│   │   └── register/page.tsx     Animated registration with role selector
-│   ├── about/page.tsx            Company page with WordReveal + CountUp + team 3D cards
-│   ├── auth/callback/page.tsx    OAuth return handler
-│   ├── blog/                     Blog index + [slug] detail
-│   ├── contact/page.tsx          Contact form
-│   ├── dashboard/
-│   │   ├── layout.tsx            Auth guard + animated sidebar
-│   │   ├── admin/
-│   │   │   ├── page.tsx          Admin overview (stats, charts, users, payments tabs)
-│   │   │   ├── users/page.tsx    User management table with role/status controls
-│   │   │   ├── properties/       All properties + delete
-│   │   │   ├── payments/         Payment history + stats
-│   │   │   ├── analytics/        Revenue + user growth charts
-│   │   │   └── settings/         Platform toggles (UI only)
-│   │   ├── agent/
-│   │   │   ├── page.tsx          Agent overview + analytics tabs
-│   │   │   ├── properties/page.tsx  My listings table (edit/delete)
-│   │   │   ├── bookings/page.tsx    Booking management (confirm/complete/cancel)
-│   │   │   ├── analytics/page.tsx   Views + bookings charts
-│   │   │   ├── new-property/        Create listing form
-│   │   │   └── properties/[id]/edit Edit listing form
-│   │   ├── buyer/
-│   │   │   ├── page.tsx          Buyer overview + charts
-│   │   │   ├── bookings/page.tsx All bookings with cancel
-│   │   │   └── favorites/page.tsx Saved property grid
-│   │   └── profile/page.tsx      Profile settings + avatar upload
+│   │   ├── login/page.tsx                Animated login
+│   │   │                                   • Floating ambient orbs
+│   │   │                                   • Card spring entrance + glow aura
+│   │   │                                   • Demo auto-fill buttons (stagger spring)
+│   │   │                                   • OAuth buttons with hover lift
+│   │   │                                   • Fields slide in sequentially from left
+│   │   │                                   • Shimmer sweep submit button
+│   │   │                                   • Animated eye toggle (rotate in/out)
+│   │   └── register/page.tsx             Animated register
+│   │                                       • Same orb/card treatment as login
+│   │                                       • Role selector with spring press
+│   │                                       • 4 fields stagger in at 70ms intervals
+│   │
+│   ├── about/page.tsx                    Company page
+│   │                                       • WordReveal hero heading (word-by-word)
+│   │                                       • CountUp stats (10K+, 5K+, etc.)
+│   │                                       • Values cards: icon rotates in from -15°
+│   │                                       • Team: 3D mouse-tilt cards, unique gradients
+│   │                                       • Timeline: alternating x-slide entrance,
+│   │                                         connector lines draw down with scaleY
+│   │
+│   ├── blog/
+│   │   ├── page.tsx                      Blog index
+│   │   └── [slug]/page.tsx               Blog post (Server Component)
+│   │
+│   ├── contact/page.tsx                  Contact form
+│   │
+│   ├── auth/callback/page.tsx            OAuth return handler
+│   │
 │   ├── payment/
-│   │   ├── page.tsx              Stripe Elements checkout
-│   │   └── success/page.tsx      Post-payment confirmation
+│   │   ├── page.tsx                      Stripe Elements checkout
+│   │   └── success/page.tsx              Post-payment confirmation
+│   │
 │   ├── properties/
-│   │   ├── page.tsx              Listing grid with filters + AnimatePresence transitions
-│   │   └── [id]/page.tsx         Detail — gallery crossfade, stat springs, booking form
-│   ├── globals.css               Tailwind + global classes + Lenis CSS
-│   ├── layout.tsx                Root layout — ScrollProgressBar + Providers
-│   └── providers.tsx             TanStack Query + Auth + Theme + SmoothScroll + PageTransition
+│   │   ├── page.tsx                      Property listing page
+│   │   │                                   • Header y-slide entrance
+│   │   │                                   • Result count swaps with AnimatePresence
+│   │   │                                   • Grid: AnimatePresence mode="wait" between filter changes
+│   │   │                                   • Skeleton cards stagger progressively
+│   │   │                                   • Empty state emoji floats on loop
+│   │   └── [id]/page.tsx                 Property detail page
+│   │                                       • Image gallery: AnimatePresence crossfade (scale 1.04→1)
+│   │                                       • Thumbnails spring in with stagger
+│   │                                       • Price underline draws right-to-left
+│   │                                       • Stats row: each pops from scale(0.6) with spring
+│   │                                       • Feature tags: CheckCircle + spring stagger
+│   │                                       • Reviews: x(-12) slide-in stagger
+│   │                                       • Booking button: shimmer sweep
+│   │                                       • Sidebar: fadeRight entrance, detail rows stagger
+│   │
+│   └── dashboard/
+│       ├── layout.tsx                    Auth guard + animated sidebar
+│       ├── profile/page.tsx              Profile settings + avatar upload (all roles)
+│       │
+│       ├── buyer/
+│       │   ├── page.tsx                  Overview: stat cards + booking activity charts
+│       │   ├── bookings/page.tsx         All bookings · 4 stat cards · status filter pills
+│       │   │                             with counts · cancel PENDING bookings
+│       │   └── favorites/page.tsx        Saved property grid · image · specs · remove button
+│       │
+│       ├── agent/
+│       │   ├── page.tsx                  Overview with tabs: Overview · Properties · Bookings · Analytics
+│       │   ├── properties/page.tsx       Listings table · thumbnail · search · status filter
+│       │   │                             · edit link · delete with ConfirmDialog
+│       │   ├── bookings/page.tsx         4 stat cards · status filter with counts
+│       │   │                             · Confirm / Cancel (PENDING) · Mark Complete (CONFIRMED)
+│       │   ├── analytics/page.tsx        Views bar chart + bookings pie + conversion stats
+│       │   ├── new-property/page.tsx     Create listing: multipart form, image preview
+│       │   └── properties/[id]/edit/     Edit listing: pre-filled form, existing images shown
+│       │
+│       └── admin/
+│           ├── page.tsx                  Platform overview with tabs
+│           ├── users/page.tsx            User table · 4 stat cards · role filter pills
+│           │                             · role dropdown · activate/deactivate
+│           ├── properties/               All properties + delete
+│           ├── payments/                 Payment history + stats
+│           ├── analytics/                Revenue + user growth charts
+│           └── settings/                 Platform toggles (UI only)
 │
 ├── components/
 │   ├── layout/
-│   │   ├── Navbar.tsx            Scroll-glass nav, animated dropdowns, mobile slide menu
-│   │   └── Footer.tsx            Stagger reveal, social hover, newsletter
+│   │   ├── Navbar.tsx                    Animated navigation
+│   │   │   • useScroll + useTransform: background fades transparent→solid over 60px
+│   │   │   • Logo slides in from left on mount
+│   │   │   • Chevrons rotate 180° (motion.span animate={{ rotate }})
+│   │   │   • Dropdowns: AnimatePresence + spring scale from origin corner
+│   │   │   • Mobile menu: height + opacity slide with AnimatePresence
+│   │   │   • Hamburger/X: icon swaps with 90° spin
+│   │   │   • Theme toggle: 15° rotation hover + 0.9 tap scale
+│   │   └── Footer.tsx                   Animated footer
+│   │       • staggerContainer on whileInView (4 columns)
+│   │       • Links: x(+4) spring on hover, dot scales up
+│   │       • Social icons: y(-3) scale(1.2) with brand color on hover
+│   │       • Logo building rocks on 4s loop
+│   │       • Subscribe button: boxShadow glow on hover
+│   │
 │   ├── property/
-│   │   ├── PropertyCard.tsx      3D mouse-tilt, hover lift, shadow depth
-│   │   ├── FeaturedProperties.tsx Stagger grid on scroll
-│   │   └── PropertyFilters.tsx   Filter controls
+│   │   ├── PropertyCard.tsx             Premium property card
+│   │   │   • useMotionValue + useSpring: mouse tilt ±6° with perspective 800
+│   │   │   • whileHover: y(-6) + blue shadow depth (rgba(37,99,235,0.18))
+│   │   │   • Gradient overlay fades in on hover
+│   │   │   • Heart button: scale(1.2) hover, scale(0.85) tap
+│   │   │   • Respects prefers-reduced-motion completely
+│   │   ├── FeaturedProperties.tsx       staggerFast grid on whileInView
+│   │   └── PropertyFilters.tsx          Filter bar
+│   │
 │   └── ui/
-│       ├── AnimatedSection.tsx   whileInView scroll trigger (respects reduced-motion)
-│       ├── CountUp.tsx           RAF-based number animation with expo ease
-│       ├── WordReveal.tsx        Per-word clip reveal with stagger
-│       ├── MagneticButton.tsx    Cursor-tracking magnetic drift
-│       ├── ScrollProgressBar.tsx Fixed gradient bar driven by useScroll + useSpring
-│       ├── SmoothScroll.tsx      Lenis root wrapper + Framer sync + route reset
-│       ├── PageTransition.tsx    AnimatePresence fade+slide on route change
-│       ├── LoadingSpinner.tsx    Dual counter-rotating rings + pulsing dot
-│       ├── ConfirmDialog.tsx     Animated modal (backdrop + spring panel)
-│       ├── Pagination.tsx        Page controls
-│       └── [dashboard pages...]
+│       ├── SmoothScroll.tsx             Lenis root wrapper
+│       │   • ReactLenis root, duration 1.2, wheelMultiplier 0.9, autoRaf true
+│       │   • LenisFramerSync: dispatches native 'scroll' event so useScroll stays accurate
+│       │   • LenisRouteReset: scrollTo(0, immediate) on pathname change
+│       │   • Completely skipped (plain div) when prefers-reduced-motion is set
+│       │
+│       ├── PageTransition.tsx           Route transition
+│       │   • AnimatePresence mode="wait" keyed by pathname
+│       │   • opacity 0→1, y 12→0 enter; y -8 exit. 280ms ease.
+│       │
+│       ├── ScrollProgressBar.tsx        Scroll progress indicator
+│       │   • Fixed top-0 z-[100]. 3px height.
+│       │   • useScroll + useSpring → scaleX from origin-left
+│       │   • Gradient: primary-500 → blue-400 → primary-600
+│       │
+│       ├── AnimatedSection.tsx          Scroll-triggered container
+│       │   • Wraps children in motion.div with whileInView
+│       │   • stagger?: boolean — uses staggerContainer variant when true
+│       │   • once: true, margin: -60px. Falls back to plain div on reduced-motion.
+│       │
+│       ├── AnimatedItem.tsx             Individual stagger child
+│       │   • Inherits variants from parent stagger container
+│       │
+│       ├── CountUp.tsx                  Animated number counter
+│       │   • Pure RAF loop — no dependencies other than React
+│       │   • Expo ease-out: 1 - 2^(-10t)
+│       │   • Fires once on useInView (once: true, margin: -40px)
+│       │   • Props: to · duration · decimals · prefix · suffix
+│       │   • Instant value on prefers-reduced-motion
+│       │
+│       ├── WordReveal.tsx               Word-by-word text reveal
+│       │   • Each word wrapped in overflow-hidden, slides from y: 105%
+│       │   • Configurable: delay · duration · stagger · once
+│       │   • Used on About hero and CTA headings
+│       │
+│       ├── MagneticButton.tsx           Magnetic cursor effect
+│       │   • useMotionValue + useSpring tracks cursor from element center
+│       │   • strength prop (default 0.3) — distance of drift
+│       │   • Wraps any child element. No-op on reduced-motion.
+│       │
+│       ├── LoadingSpinner.tsx           Multi-ring spinner
+│       │   • Outer ring: clockwise 1s
+│       │   • Inner ring: counter-clockwise 0.75s (gyroscope effect)
+│       │   • Center dot: scale + opacity pulse 1.2s
+│       │   • Sizes: sm (28px) · md (48px) · lg (72px)
+│       │   • PageLoader export: full-screen overlay with fade-exit
+│       │
+│       ├── ConfirmDialog.tsx            Animated confirmation modal
+│       │   • Backdrop: rgba(0,0,0,0.5) + blur(2px) fade
+│       │   • Click backdrop to dismiss
+│       │   • Panel: spring from scale(0.94) y(16)
+│       │   • Danger icon: pops in with spring at delay 0.15s
+│       │   • Buttons: scale(1.02) hover, scale(0.97) tap
+│       │
+│       └── Pagination.tsx              Page number controls
 │
 ├── context/
-│   └── ThemeContext.tsx          Dark mode toggle — reads/writes localStorage
+│   └── ThemeContext.tsx                Dark mode
+│       • Reads localStorage.theme on mount
+│       • Toggles dark class on <html>
+│       • Tailwind darkMode: 'class'
 │
 ├── hooks/
-│   ├── useAuth.ts                Auth state + login/logout/register/refreshUser
-│   └── useProperties.ts         useProperties · useProperty · useFeaturedProperties
-│                                useMyProperties · useCreateProperty · useToggleFavorite
+│   ├── useAuth.ts                       Auth state management
+│   │   • AuthProvider calls GET /auth/me on mount
+│   │   • login(): calls API, stores accessToken + refreshToken in TokenStore, sets user
+│   │   • register(): same token storage
+│   │   • logout(): calls API, TokenStore.clear(), setUser(null)
+│   │   • refreshUser(): re-fetches /auth/me (useful after profile update)
+│   │
+│   └── useProperties.ts                Property data hooks
+│       • useProperties(filters)        paginated list
+│       • useProperty(id)               single property
+│       • useFeaturedProperties()       featured listing
+│       • useMyProperties(params)       agent's properties
+│       • useCreateProperty()           mutation with cache invalidation
+│       • useDeleteProperty()           mutation with cache invalidation
+│       • useToggleFavorite()           mutation with cache invalidation
 │
-├── lib/
-│   ├── animations.ts            Shared Framer Motion variants (fadeUp, stagger, modal, etc.)
-│   ├── api.ts                   Named API objects: authApi propertyApi userApi bookingApi
-│                                paymentApi reviewApi
-│   ├── axios.ts                 Axios instance — baseURL from NEXT_PUBLIC_API_URL,
-│                                withCredentials, 401 refresh interceptor
-│   └── utils.ts                 formatPrice · formatDate · getStatusColor · cn
-│                                truncate · TIME_SLOTS
-│
-└── types/
-    └── index.ts                 User · Property · Booking · Payment · Review
-                                 PropertyFilters · ApiResponse · PaginatedResponse
+└── lib/
+    ├── token.ts                         localStorage token store (SSR-safe)
+    │   • TokenStore.getAccess() / setAccess() / clearAccess()
+    │   • TokenStore.getRefresh() / setRefresh() / clearRefresh()
+    │   • TokenStore.clear() — clears both
+    │   • All methods are no-ops on SSR (typeof window check)
+    │
+    ├── axios.ts                         Axios instance + interceptors
+    │   • baseURL: NEXT_PUBLIC_API_URL (fallback: http://localhost:5000)
+    │   • withCredentials: true (cookie fallback for localhost)
+    │   • Request interceptor: reads TokenStore.getAccess(), sets Authorization: Bearer header
+    │   • Response 401 interceptor: sends { refreshToken } in body to /auth/refresh,
+    │     stores new tokens, replays original request.
+    │     On refresh failure: TokenStore.clear(), redirect /login (dashboard routes only)
+    │
+    ├── api.ts                           Named API objects
+    │   • authApi    — register · login · logout · refresh · me
+    │   • propertyApi — list · get · featured · create · update · delete
+    │   │               myProperties · stats · removeImage
+    │   • userApi    — profile · updateProfile · changePassword · uploadAvatar
+    │   │               favorites · toggleFavorite · list · updateRole · toggleStatus
+    │   • bookingApi — create · myBookings · agentBookings · adminBookings · updateStatus
+    │   • paymentApi — createIntent · myPayments · adminPayments · stats
+    │   • reviewApi  — list · create · delete
+    │
+    ├── animations.ts                    Shared Framer Motion variants
+    │   • All ease values typed as [number,number,number,number] tuples (TS requirement)
+    │   • fadeUp · fadeLeft · fadeRight · fadeIn · scaleIn
+    │   • staggerContainer · staggerFast
+    │   • backdrop · modalPanel · mobileMenu · dropdownVariants
+    │
+    └── utils.ts                         Utility functions
+        • formatPrice(n)      BDT: ৳5.50 Cr / ৳65.00 Lac / ৳X,XXX
+        • formatDate(s)       Long date string
+        • formatDateShort(s)  Short date string
+        • getStatusColor(s)   Tailwind badge color classes by status string
+        • truncate(s, n)      Truncate with ellipsis
+        • cn(...classes)      clsx + tailwind-merge
+        • TIME_SLOTS          Booking time slot constants
 ```
 
 ---
 
-## Setup
+## Authentication Architecture
 
-### 1 — Install
+### The problem it solves
 
-```bash
-# From repo root (npm workspaces hoist everything)
-npm install
+Vercel deploys frontend and backend on **different domains** (`property-smart-frontend.vercel.app` vs `property-smart-backend.vercel.app`). Modern browsers block third-party cookies across different origins, which caused:
+
+- `GET /auth/me` (called on every page load) silently dropping the session cookie → user appeared logged in, then immediately logged out (the "flicker" bug)
+- Stale cookies in the normal browser causing login to fail
+
+### The solution: dual auth
+
+```
+Login response body:  { user, accessToken, refreshToken }
+                               ↓
+useAuth.login()        TokenStore.setAccess(accessToken)
+                       TokenStore.setRefresh(refreshToken)
+                               ↓
+Axios request interceptor  →  Authorization: Bearer <accessToken>  (every request)
+                               ↓
+Backend authenticate()     reads cookie first, then Authorization header
 ```
 
-### 2 — Environment
+Both channels work:
+- **Localhost**: cookies work (Next.js proxy makes it same-origin) + header also set
+- **Vercel production**: cookies blocked by browser → header is the reliable path
 
-```bash
-cp .env.local.example .env.local
-```
+### Token lifecycle
 
-```env
-NEXT_PUBLIC_API_URL=http://localhost:5000
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_xxx
-```
-
-### 3 — Run
-
-```bash
-npm run dev        # next dev on :3000
-```
-
----
-
-## Scripts
-
-| Script | Description |
+| Event | Action |
 |---|---|
-| `npm run dev` | `next dev` — development server |
-| `npm run build` | `next build` — production build |
-| `npm run type-check` | `tsc --noEmit` — type check without emit |
-| `npm run lint` | `next lint` |
+| Login | Store `accessToken` + `refreshToken` in `localStorage` |
+| Every request | Axios interceptor attaches `Authorization: Bearer <accessToken>` |
+| 401 response | Send `{ refreshToken }` in POST body to `/auth/refresh` |
+| Successful refresh | Store new `accessToken` + `refreshToken`, replay original request |
+| Failed refresh | `TokenStore.clear()`, redirect to `/login` (dashboard routes only) |
+| Logout | Call `/auth/logout`, `TokenStore.clear()`, `setUser(null)` |
+| Page reload | `AuthProvider` mounts → axios interceptor attaches stored token → `GET /auth/me` succeeds |
 
 ---
 
-## Environment Variables
+## Global CSS Classes
 
-| Variable | Required | Description |
-|---|---|---|
-| `NEXT_PUBLIC_API_URL` | Yes | Backend URL. Used by `axios.ts` (baseURL) and `next.config.ts` (rewrite destination) |
-| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | For payments | Stripe publishable key |
+Defined in `globals.css` under `@layer components`. Extend here, not inline:
+
+| Class | Description |
+|---|---|
+| `.btn-primary` | Blue filled button with focus ring |
+| `.btn-secondary` | Outlined button, dark mode aware |
+| `.btn-danger` | Red filled button |
+| `.input` | Styled form input, dark mode aware |
+| `.card` | Rounded border + shadow panel, dark mode aware |
+| `.badge` | Small pill label |
+| `.section-light` | `bg-gray-50 dark:bg-gray-900` |
+| `.section-dark` | `bg-white dark:bg-gray-950` |
+
+> **Important:** Do not use stacked variants like `dark:focus:*` inside `@apply` — Tailwind v3 does not support them in `@layer components`.
 
 ---
 
-## Architecture Notes
+## Key Patterns
 
-### Data fetching
+### `useSearchParams` requires Suspense
 
-All data fetching is **client-side only** — Server Components render shells and Client Components use TanStack Query. There are no `fetch()` calls in Server Components.
+Any component calling `useSearchParams()` must be wrapped in `<Suspense>`. Violating this causes `next build` to fail with a prerender error:
 
-### Auth flow
+```tsx
+function PageContent() {
+  const searchParams = useSearchParams();
+  // ...
+}
+export default function Page() {
+  return <Suspense><PageContent /></Suspense>;
+}
+```
 
-1. `AuthProvider` calls `GET /api/v1/auth/me` on mount
-2. `useAuth()` exposes `{ user, loading, login, register, logout, refreshUser }`
-3. `login()` returns the `User` object so the caller can redirect by role
-4. 401 responses trigger a silent refresh attempt via `POST /api/v1/auth/refresh`; if that also fails and the user is on a `/dashboard/*` route, they're redirected to `/login`
+### External images
 
-### API proxy
+Always use `<Image>` from `next/image`. Allowed remote patterns in `next.config.ts`:
+- `images.unsplash.com`
+- `res.cloudinary.com`
+- `ui-avatars.com`
+- `lh3.googleusercontent.com`
+- `avatars.githubusercontent.com`
 
-`next.config.ts` rewrites `/api/:path*` → `${NEXT_PUBLIC_API_URL}/api/:path*`. This makes API calls same-origin from the browser's perspective, but Axios uses the backend URL as `baseURL` so requests go direct — CORS + `sameSite: 'none'` cookies handle the cross-origin case in production.
+For `blob:` preview URLs (file upload previews only):
+```tsx
+{/* eslint-disable-next-line @next/next/no-img-element */}
+<img src={URL.createObjectURL(file)} alt="" />
+```
 
 ### Dark mode
 
-`ThemeProvider` reads `localStorage.theme` on mount and toggles the `dark` class on `<html>`. The Tailwind config uses `darkMode: 'class'`.
+The `ThemeProvider` in `context/ThemeContext.tsx` reads and writes `localStorage.theme` and syncs the `dark` class on `<html>`. Every component should use `dark:` variants instead of JS theme checks.
 
-Do **not** use stacked variants like `dark:focus:*` inside `@apply` — Tailwind v3 doesn't support them in `@layer components`.
+### Form validation
 
-### `useSearchParams` + Suspense
+Use `react-hook-form` + `zod` + `@hookform/resolvers/zod`. The `z.coerce` variants are used for numeric inputs that come from HTML form elements as strings.
 
-Any component calling `useSearchParams()` must be wrapped in `<Suspense>`. Violating this fails `next build` with a prerender error.
+### Toasts
 
----
+`react-hot-toast` — use `toast.success()` / `toast.error()`. Already configured in `providers.tsx` with consistent styling.
 
-## Animation System
-
-### Smooth scroll — Lenis
-
-`SmoothScroll` (`src/components/ui/SmoothScroll.tsx`) wraps the entire app:
-
-```tsx
-<ReactLenis root options={{ duration: 1.2, smoothWheel: true, wheelMultiplier: 0.9 }}>
-  <LenisFramerSync />   {/* dispatches native scroll event so useScroll stays in sync */}
-  <LenisRouteReset />   {/* scrollTo(0, immediate) on pathname change */}
-  {children}
-</ReactLenis>
-```
-
-If `prefers-reduced-motion` is set, `SmoothScroll` renders children directly with no Lenis instance.
-
-### Shared variants — `src/lib/animations.ts`
+### Class merging
 
 ```ts
-fadeUp          // opacity 0→1, y 28→0
-fadeLeft        // opacity 0→1, x -32→0
-fadeRight       // opacity 0→1, x 32→0
-scaleIn         // opacity 0→1, scale 0.92→1
-staggerContainer // staggerChildren: 0.1
-staggerFast     // staggerChildren: 0.06
-backdrop        // modal overlay fade
-modalPanel      // spring scale+y entrance
-mobileMenu      // height + opacity slide
-dropdownVariants // spring scale from origin
+import { cn } from '@/lib/utils';
+// cn merges Tailwind classes, resolves conflicts with tailwind-merge
+cn('px-4 py-2', condition && 'bg-blue-500', 'text-white')
 ```
-
-All `ease` values are typed as `[number, number, number, number]` tuples — required by Framer Motion's TypeScript types.
-
-### PropertyCard — 3D tilt
-
-```tsx
-// useMotionValue tracks normalized mouse position within the card (-0.5 to 0.5)
-// useSpring smooths to rotateX/rotateY ±6° with perspective: 800
-// whileHover lifts y:-6 with a blue-tinted box-shadow
-// MouseLeave springs back to 0,0
-```
-
-### Key animation components
-
-| Component | Effect |
-|---|---|
-| `ScrollProgressBar` | `useScroll` scaleX + gradient — global page progress |
-| `PageTransition` | `AnimatePresence` fade+slide on every route change |
-| `WordReveal` | Each word in `overflow-hidden`, slides up from `y: 105%` |
-| `CountUp` | RAF loop with expo-ease-out; fires once on `useInView` |
-| `MagneticButton` | `useMotionValue + useSpring` floats toward cursor |
-| `LoadingSpinner` | Outer ring CW, inner ring CCW, center dot pulse |
-| `ConfirmDialog` | Backdrop fade + panel spring from `scale(0.94) y(16)` |
-
----
-
-## Routing — Dashboard Guard
-
-`dashboard/layout.tsx` shows a spinner while `loading` is true; redirects to `/login` only when `!loading && !user`. The sidebar `isActive()` uses exact match for overview routes (`/dashboard/admin`, `/dashboard/agent`, `/dashboard/buyer`) so sub-routes don't keep the overview item highlighted.
 
 ---
 
 ## Stripe Integration
 
 ```tsx
-// 1. Call POST /api/v1/payments/intent → { clientSecret }
-// 2. loadStripe(NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
-// 3. Wrap form in <Elements stripe={...} options={{ clientSecret }}>
-// 4. Use <PaymentElement /> inside the form
-// 5. stripe.confirmPayment({ redirect: 'if_required' }) → /payment/success
+// 1. POST /api/v1/payments/intent → { clientSecret }
+// 2. const stripe = await loadStripe(NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
+// 3. <Elements stripe={stripe} options={{ clientSecret }}>
+// 4.   <PaymentElement />
+//      <button onClick={() => stripe.confirmPayment({ redirect: 'if_required' })} />
+// 5. </Elements>
+// On success: redirect to /payment/success
 ```
 
 ---
 
-## Image Handling
+## Next.js Config Notes
 
-- Always use `<Image>` from `next/image` for external URLs
-- Allowed remote patterns: `images.unsplash.com` · `res.cloudinary.com` · `ui-avatars.com` · `lh3.googleusercontent.com` · `avatars.githubusercontent.com`
-- For `blob:` preview URLs (file upload previews), use `<img>` with the ESLint disable comment:
-  ```tsx
-  {/* eslint-disable-next-line @next/next/no-img-element */}
-  <img src={URL.createObjectURL(file)} alt="" />
-  ```
-- Add new external image hosts to `images.remotePatterns` in `next.config.ts`
+- `/api/:path*` rewrites proxy to `${NEXT_PUBLIC_API_URL}/api/:path*` — used as a cookie fallback on localhost
+- `images.remotePatterns` — add new image hosts here before using external image URLs
+- Build-time env vars (`NEXT_PUBLIC_*`) require a new deployment to take effect
 
 ---
 
-## Global CSS Classes
+## Lenis Smooth Scroll
 
-Defined in `globals.css` under `@layer components` — extend here, not inline:
+`SmoothScroll` wraps the entire app at the provider level:
 
-| Class | Description |
-|---|---|
-| `.btn-primary` | Blue filled button |
-| `.btn-secondary` | Outlined button |
-| `.btn-danger` | Red filled button |
-| `.input` | Styled form input |
-| `.card` | Rounded border + shadow panel |
-| `.badge` | Pill label |
+```
+Lenis options:
+  duration:        1.2      — scroll animation length
+  easing:          t => Math.min(1, 1.001 - Math.pow(2, -10 * t))  — expo ease-out
+  wheelMultiplier: 0.9      — slightly less than default, prevents floaty feel
+  touchMultiplier: 1.8      — responsive touch on mobile
+  syncTouch:       false    — native momentum on iOS
+  autoRaf:         true     — Lenis manages its own requestAnimationFrame loop
+```
 
----
+**Framer Motion sync** — `LenisFramerSync` dispatches a native `scroll` event on every Lenis tick so `useScroll` (used in Navbar glass effect) reads the correct virtual scroll position.
 
-## Utility Functions — `src/lib/utils.ts`
+**Route reset** — `LenisRouteReset` watches `usePathname` and calls `lenis.scrollTo(0, { immediate: true, force: true })` on every navigation.
 
-| Function | Description |
-|---|---|
-| `formatPrice(n)` | BDT: `৳5.50 Cr` / `৳65.00 Lac` / `৳X,XXX` |
-| `formatDate(s)` | Long date string |
-| `formatDateShort(s)` | Short date string |
-| `getStatusColor(status)` | Tailwind badge color classes |
-| `truncate(s, n)` | Truncate with ellipsis |
-| `cn(...classes)` | `clsx` + `tailwind-merge` |
-| `TIME_SLOTS` | Array of booking time slots |
+**Reduced motion** — the entire `ReactLenis` wrapper is skipped; children render directly, native scroll is used.
+
+Using Lenis programmatically in any component:
+
+```tsx
+import { useLenis } from '@/components/ui/SmoothScroll';
+
+function BackToTop() {
+  const lenis = useLenis();
+  return <button onClick={() => lenis?.scrollTo(0, { duration: 1.2 })}>Top</button>;
+}
+```
