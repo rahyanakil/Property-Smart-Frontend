@@ -1,10 +1,13 @@
 'use client';
 
+import { motion, useReducedMotion } from 'framer-motion';
 import { useFeaturedProperties } from '@/hooks/useProperties';
 import PropertyCard from './PropertyCard';
+import { staggerFast } from '@/lib/animations';
 
 export default function FeaturedProperties() {
   const { data: properties, isLoading, error } = useFeaturedProperties();
+  const shouldReduce = useReducedMotion();
 
   if (isLoading) {
     return (
@@ -32,10 +35,16 @@ export default function FeaturedProperties() {
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+    <motion.div
+      className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+      variants={shouldReduce ? {} : staggerFast}
+      initial="hidden"
+      whileInView="show"
+      viewport={{ once: true, margin: '-40px' }}
+    >
       {properties.map((property: ReturnType<typeof properties>[number]) => (
         <PropertyCard key={property.id} property={property} />
       ))}
-    </div>
+    </motion.div>
   );
 }
